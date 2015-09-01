@@ -129,9 +129,10 @@ public class CardStack extends LinkedList<Card> {
 	@Override
 	public String toString() {
 		Card last = isEmpty() ? null : getLast();
-		if (null != last && last.getStack().get() != this){
-			System.err.println("last of stack "+"[x=" + x + ", y=" + y + ", size=" + size() + ", top="
-					+ last + "]"+" has not me as stack, but " + last.getStack().get());
+		if (null != last && last.getStack().get() != this) {
+			System.err.println("last of stack " + "[x=" + x + ", y=" + y
+					+ ", size=" + size() + ", top=" + last + "]"
+					+ " has not me as stack, but " + last.getStack().get());
 		}
 		return "CardStack [x=" + x + ", y=" + y + ", size=" + size() + ", top="
 				+ last + "]";

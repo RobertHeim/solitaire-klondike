@@ -1,9 +1,5 @@
 package de.robert_heim.solitaire;
 
-import java.util.Optional;
-
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -11,9 +7,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
-import com.google.common.collect.ImmutableList;
-
 import de.robert_heim.solitaire.Card.CardGroup;
 
 public class CardDrawer {
@@ -154,43 +147,4 @@ public class CardDrawer {
 		return stack.indexOf(card) * SPACER / 2;
 	}
 
-	public static void drawStock(CardStack stock, Group container) {
-		Group stockGroup = new Group();
-		stockGroup.setOnMouseReleased(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event arg0) {
-				if (stock.isEmpty()) {
-					// return all from waste to stock
-					for (Card c : ImmutableList.copyOf(Main.waste
-							.descendingIterator())) {
-						c.setFaceup(false);
-						Main.waste.remove(c);
-						Main.stock.add(c);
-						c.setStack(Optional.of(Main.stock));
-					}
-				} else {
-					// draw 1
-					Card c = Main.stock.getLast();
-					c.getGroup().getChildren().clear();
-					Main.stock.remove(c);
-					c.setFaceup(true);
-					new CardGroup(c);
-					Main.waste.add(c);
-					c.setStack(Optional.of(Main.waste));
-				}
-				redrawStack(Main.stock);
-				redrawStack(Main.waste);
-			}
-
-		});
-		drawStack(stock, stockGroup);
-		container.getChildren().add(stockGroup);
-	}
-
-	public static void drawWaste(CardStack stack, Group container) {
-		Group waste = new Group();
-		drawStack(stack, waste);
-		container.getChildren().add(waste);
-	}
 }

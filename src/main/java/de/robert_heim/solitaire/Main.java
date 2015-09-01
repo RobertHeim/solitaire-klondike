@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -111,7 +113,7 @@ public class Main extends Application {
 		Menu menuEdit = new Menu("Edit");
 		menuEdit.getItems().addAll(menuUndo, menuRedo);
 
-		menuBar.getMenus().addAll(menuFile);//, menuEdit);
+		menuBar.getMenus().addAll(menuFile);// , menuEdit);
 
 		rootBorderPane.setTop(menuBar);
 
@@ -172,8 +174,39 @@ public class Main extends Application {
 
 		tableaus.forEach(t -> CardDrawer.drawStack(t, parentGroup));
 		foundations.forEach(f -> CardDrawer.drawStack(f, parentGroup));
-		CardDrawer.drawStock(stock, parentGroup);
-		CardDrawer.drawWaste(waste, parentGroup);
+
+		Group stockGroup = stock.getGroup();
+		parentGroup.getChildren().add(stockGroup);
+		CardDrawer.drawStack(stock, stockGroup);
+		stockGroup.setOnMouseReleased(new EventHandler<Event>() {
+			@Override
+			public void handle(Event arg0) {
+				if (stock.isEmpty()) {
+					// return all from waste to stock
+					for (Card c : ImmutableList.copyOf(Main.waste
+							.descendingIterator())) {
+						c.setFaceup(false);
+						Main.waste.remove(c);
+						Main.stock.add(c);
+						c.setStack(Optional.of(Main.stock));
+					}
+				} else {
+					// draw 1
+					Card c = Main.stock.getLast();
+					c.getGroup().getChildren().clear();
+					Main.stock.remove(c);
+					c.setFaceup(true);
+					new CardGroup(c);
+					Main.waste.add(c);
+					c.setStack(Optional.of(Main.waste));
+				}
+				CardDrawer.redrawStack(Main.stock);
+				CardDrawer.redrawStack(Main.waste);
+			}
+		});
+
+		CardDrawer.drawStack(waste, parentGroup);
+
 	}
 
 	public static class MouseLocation {
@@ -209,12 +242,13 @@ public class Main extends Application {
 		long minutes = duration.toMinutes();
 		long totalSeconds = duration.getSeconds();
 		long points = 1000 - totalSeconds;
-		if (points<0) {
+		if (points < 0) {
 			points = 0;
 		}
 		long seconds = duration.minusMinutes(minutes).getSeconds();
 		return minutes + " Minute" + (minutes != 1 ? "n" : "") + ", " + seconds
-				+ " Sekunde" + (seconds != 1 ? "n" : "") + ",  \tPunkte: " + points;
+				+ " Sekunde" + (seconds != 1 ? "n" : "") + ",  \tPunkte: "
+				+ points;
 	}
 
 	public static void checkFinish() {
