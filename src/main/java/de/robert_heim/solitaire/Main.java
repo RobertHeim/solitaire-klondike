@@ -175,7 +175,7 @@ public class Main extends Application {
 		tableaus.forEach(t -> CardDrawer.drawStack(t, parentGroup));
 		foundations.forEach(f -> CardDrawer.drawStack(f, parentGroup));
 
-		Group stockGroup = stock.getGroup();
+		Group stockGroup = new Group();
 		parentGroup.getChildren().add(stockGroup);
 		CardDrawer.drawStack(stock, stockGroup);
 		stockGroup.setOnMouseReleased(new EventHandler<Event>() {
