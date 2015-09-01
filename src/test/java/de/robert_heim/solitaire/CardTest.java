@@ -95,27 +95,27 @@ public class CardTest {
 		targetStack.add(new Card(Value.SEVEN, Color.CLUBS));
 
 		toPut.clear();
-		toPut.add(new Card(Value.SIX, Color.CLUBS));
+		toPut.add(new Card(Value.EIGHT, Color.CLUBS));
 		assertTrue(targetStack.isApplyable(toPut));
 
 		// bad color
 
 		toPut.clear();
-		toPut.add(new Card(Value.SIX, Color.SPADES));
+		toPut.add(new Card(Value.EIGHT, Color.SPADES));
 		assertFalse(targetStack.isApplyable(toPut));
 
 		toPut.clear();
-		toPut.add(new Card(Value.SIX, Color.HEART));
+		toPut.add(new Card(Value.EIGHT, Color.HEART));
 		assertFalse(targetStack.isApplyable(toPut));
 
 		toPut.clear();
-		toPut.add(new Card(Value.SIX, Color.DIAMONDS));
+		toPut.add(new Card(Value.EIGHT, Color.DIAMONDS));
 		assertFalse(targetStack.isApplyable(toPut));
 
 		// bad value
 
 		toPut.clear();
-		toPut.add(new Card(Value.FIVE, Color.CLUBS));
+		toPut.add(new Card(Value.SIX, Color.CLUBS));
 		assertFalse(targetStack.isApplyable(toPut));
 
 		toPut.clear();
@@ -129,7 +129,7 @@ public class CardTest {
 		// bad color and bad value
 
 		toPut.clear();
-		toPut.add(new Card(Value.FIVE, Color.SPADES));
+		toPut.add(new Card(Value.SIX, Color.SPADES));
 		assertFalse(targetStack.isApplyable(toPut));
 	}
 }
