@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -113,7 +114,11 @@ public class Main extends Application {
 		Menu menuEdit = new Menu("Edit");
 		menuEdit.getItems().addAll(menuUndo, menuRedo);
 
-		menuBar.getMenus().addAll(menuFile);// , menuEdit);
+		Label menuUp = new Label("All Up");
+		menuUp.setOnMouseClicked(e -> allUp());
+		Menu manuUp = new Menu();
+		manuUp.setGraphic(menuUp);
+		menuBar.getMenus().addAll(menuFile, manuUp);// , menuEdit);
 
 		rootBorderPane.setTop(menuBar);
 
@@ -251,6 +256,56 @@ public class Main extends Application {
 				+ points;
 	}
 
+	/**
+	 * Tries to move the card to foundation.
+	 * 
+	 * @param card
+	 * @return true if card was moved, false otherwise
+	 */
+	private static boolean moveToFoundation(Card card) {
+		List<Card> toPut = Arrays.asList(card);
+		for (CardStack f : foundations) {
+			if (f.isApplyable(toPut)) {
+				moveCards(toPut, f);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tries to move the top card of the stack to foundation
+	 * 
+	 * @param stack
+	 *            the stack to take the top card from.
+	 * @return true if the card was moved, false otherwise.
+	 */
+	private static boolean up(CardStack t) {
+		if (!t.isEmpty()) {
+			Card card = t.getLast();
+			if (moveToFoundation(card)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void allUp() {
+		System.out.println("allUp");
+		boolean movedSth = false;
+		do {
+			movedSth = false;
+			for (CardStack t : tableaus) {
+				if (up(t)) {
+					movedSth = true;
+				}
+			}
+			if (up(waste)) {
+				movedSth = true;
+			}
+		} while (movedSth);
+	}
+
 	public static void checkFinish() {
 		boolean foundationsFull = foundations.stream().map(f -> f.size())
 				.allMatch(s -> 13 == s);
@@ -300,15 +355,7 @@ public class Main extends Application {
 				if (2 == e.getClickCount()) {
 					Card sourceCard = source.getCard();
 					if (sourceCard.isTop()) {
-						List<Card> toPut = new ArrayList<>();
-						toPut.add(sourceCard);
-						// try bring to foundation
-						for (CardStack f : foundations) {
-							if (f.isApplyable(toPut)) {
-								moveCards(toPut, f);
-								break;
-							}
-						}
+						moveToFoundation(sourceCard);
 					}
 				} else {
 					Card sourceCard = source.getCard();
